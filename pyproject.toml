@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "LLM_text_to_sql"
+version = "0.1.0"
+description = "A project for text-to-SQL using LLMs"
+dependencies = [
+    "pydantic",
+    "pydantic-settings",
+    "openai",
+    "langchain",
+    "langchain-openai",
+    "langchain-community",
+    "langgraph",
+    "pandas",
+    "langchain-groq",
+    "ipython",
+    "ipykernel",
+    "jupyter",
+    "loguru"
+]
