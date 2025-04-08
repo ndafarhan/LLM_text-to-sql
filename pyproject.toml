@@ -1,11 +1,8 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "LLM_text_to_sql"
 version = "0.1.0"
 description = "A project for text-to-SQL using LLMs"
+readme = "README.md"
 dependencies = [
     "pydantic",
     "pydantic-settings",
@@ -19,5 +16,8 @@ dependencies = [
     "ipython",
     "ipykernel",
     "jupyter",
-    "loguru"
+    "loguru",
+    "uvicorn",
+    "uuid>=1.30",
 ]
+requires-python = ">=3.12"
