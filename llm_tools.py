@@ -3,13 +3,16 @@ This module provides a set of tools for interacting with large language models (
 """
 
 import pandas as pd
-from typing import Type, Tuple, Literal, Dict, Optional, List, Union, Any
-from pydantic import BaseModel, Field
+from typing import Annotated, Dict, Any
 from langchain_core.tools import BaseTool
 from datetime import datetime
 from langchain_community.utilities import SQLDatabase
 from loguru import logger
 from langchain_core.tools import tool
+from agent_state import State
+from langgraph.prebuilt import InjectedState
+from langgraph.types import Command
+from pydantic import Field
 
 
 @tool
@@ -21,6 +24,19 @@ def get_current_datetime(_=None):
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")
     
+@tool 
+def get_data_from_database_tool(request: str, state: Annotated[State, InjectedState]) -> str:
+    """
+    Get data from the database based on user request.
+    """
+    logger.debug(f"GetDataFromDatabaseTool | Getting data from database with request: {request}")
+    return Command(
+        goto="execute_query",
+        update={
+            "sql_question": request,
+        }
+    )
+
 
 class ExecuteQueryTool(BaseTool):
     """
@@ -29,14 +45,11 @@ class ExecuteQueryTool(BaseTool):
 
     name: str = "execute_query"
     description: str = "Execute a SQL query against a database."
-
-    def __init__(self, db: SQLDatabase, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.db = db
-
-    def _run(self, query: str) -> pd.DataFrame:
+    db: SQLDatabase 
+    
+    def _run(self, query: str) -> str:
         """
-        Execute the SQL query and return the result as a DataFrame.
+        Execute the SQL query and return the result as a DataFrame.cute the SQL query and return the result as a DataFrame.
         """
         logger.debug(f"ExecuteQueryTool | Executing SQL query: {query}")
         return self.db.run(query)
@@ -49,18 +62,17 @@ class DatabaseInformationTool(BaseTool):
 
     name: str = "database_information"
     description: str = "Get information about the database."
+    db: SQLDatabase
 
-    def __init__(self, db: SQLDatabase, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.db = db
-
-    def _run(self) -> Dict[str, Any]:
+    def _run(self,_=None) -> Dict[str, Any]:
         """
         Get information about the database.
         """
         logger.debug("DatabaseInformationTool | Getting database information")
         return {
             "db_dialect": self.db.dialect,
-            "usable_table_names": self.db.usable_table_names(),
+            "usable_table_names": self.db.get_usable_table_names(),
             "table_schemas": self.db.get_table_info(),
         }
+
+        
