@@ -9,7 +9,7 @@ from datetime import datetime
 from langchain_community.utilities import SQLDatabase
 from loguru import logger
 from langchain_core.tools import tool
-from agent_state import State
+from src.agent.agent_state import State
 from langgraph.prebuilt import InjectedState
 from langgraph.types import Command
 from pydantic import Field
@@ -23,19 +23,6 @@ def get_current_datetime(_=None):
     logger.debug("GetCurrentDateTimeTool | Getting current date and time")
     now = datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")
-    
-@tool 
-def get_data_from_database_tool(request: str, state: Annotated[State, InjectedState]) -> str:
-    """
-    Get data from the database based on user request.
-    """
-    logger.debug(f"GetDataFromDatabaseTool | Getting data from database with request: {request}")
-    return Command(
-        goto="execute_query",
-        update={
-            "sql_question": request,
-        }
-    )
 
 
 class ExecuteQueryTool(BaseTool):

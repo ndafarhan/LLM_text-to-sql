@@ -8,7 +8,7 @@ class Setting(BaseSettings):
     """
     Settings for the application.
     """
-    GROQ_QWEN_2_5_32_B_MODEL_NAME: str = 'qwen-2.5-32b'
+    GROQ_QWEN_2_5_32_B_MODEL_NAME: str = 'qwen-qwq-32b'
     GROQ_API_KEY: str = ''
     GROQ_TEMPERATURE: float = 0.0
 
